@@ -1,6 +1,6 @@
 {
   "name": "rempl-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Command line app to launch rempl server instance",
   "author": "Roman Dvornov",
   "license": "MIT",
