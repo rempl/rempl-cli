@@ -10,7 +10,7 @@
     "url": "https://github.com/rempl/rempl/issues"
   },
   "keywords": ["cli", "rempl", "server"],
-  "bin": "./bin/rempl",
+  "bin": { "rempl": "./bin/rempl" },
   "preferGlobal": true,
   "dependencies": {
     "clap": "^1.1.2",
