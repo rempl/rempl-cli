@@ -4,17 +4,17 @@
   "description": "Command line app to launch rempl server instance",
   "author": "Roman Dvornov",
   "license": "MIT",
-  "repository": "rempl/rempl",
-  "homepage": "https://github.com/rempl/rempl",
+  "repository": "rempl/rempl-cli",
+  "homepage": "https://github.com/rempl-cli/rempl",
   "bugs": {
-    "url": "https://github.com/rempl/rempl/issues"
+    "url": "https://github.com/rempl/rempl-cli/issues"
   },
-  "keywords": ["cli", "rempl", "server"],
+  "keywords": ["rempl", "server", "cli"],
   "bin": { "rempl": "./bin/rempl" },
   "preferGlobal": true,
   "dependencies": {
     "clap": "^1.1.2",
-    "rempl": "^1.0.0-alpha3",
+    "rempl": "^1.0.0-alpha4",
     "basisjs-tools-server": "basisjs/basisjs-tools-server#rempl"
   }
 }
