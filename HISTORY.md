@@ -1,3 +1,8 @@
+## 1.0.3 (December 21, 2016)
+
+- Added `--version` option
+- Bumped `rempl` version to `1.0.0-alpha5`
+
 ## 1.0.2 (December 21, 2016)
 
 - Added `--verbose` option
