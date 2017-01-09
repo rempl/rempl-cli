@@ -1,6 +1,6 @@
 {
   "name": "rempl-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Command line app to launch rempl server instance",
   "author": "Roman Dvornov",
   "license": "MIT",
@@ -14,7 +14,7 @@
   "preferGlobal": true,
   "dependencies": {
     "clap": "^1.1.2",
-    "rempl": "^1.0.0-alpha5",
+    "rempl": "^1.0.0-alpha6",
     "basisjs-tools-server": "basisjs/basisjs-tools-server#rempl"
   }
 }

@@ -1,3 +1,7 @@
+## 1.0.4 (January 9, 2017)
+
+- Bumped `rempl` version to `1.0.0-alpha6`
+
 ## 1.0.3 (December 21, 2016)
 
 - Added `--version` option
