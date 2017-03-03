@@ -1,3 +1,7 @@
+## 1.0.7 (March 3, 2017)
+
+- Bumped `rempl` version to `1.0.0-alpha10`
+
 ## 1.0.6 (March 3, 2017)
 
 - Bumped `rempl` version to `1.0.0-alpha9`
