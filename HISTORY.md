@@ -1,3 +1,8 @@
+## 1.1.0 (March 24, 2017)
+
+- Open dev version of web interface in `dev` mode
+- Bumped `rempl` version to `1.0.0-alpha11`
+
 ## 1.0.7 (March 3, 2017)
 
 - Bumped `rempl` version to `1.0.0-alpha10`
