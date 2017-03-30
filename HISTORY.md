@@ -1,3 +1,8 @@
+## 1.1.2 (March 30, 2017)
+
+- Fixed usage in `--dev` mode. We take into account that `rempl` has no dev version of WS server client when installed from `npm`
+- Bumped `rempl` version to `1.0.0-alpha13`
+
 ## 1.1.1 (March 26, 2017)
 
 - Bumped `rempl` version to `1.0.0-alpha12`
