@@ -32,8 +32,12 @@ Usage:
 
 Options:
 
-      --dev          Developer mode (use non build version of client)
-  -h, --help         Output usage information
-      --no-color     Suppress color output
-  -p, --port <n>     Listening port (default 8177)
+      --dev                Developer mode (use dev version of everything when possible)
+  -h, --help               Output usage information
+      --no-color           Suppress color output
+  -p, --port <n>           Listening port (default 8177)
+      --ssl                Enable https
+      --ssl-cert <path>    Path to SSL .cert file
+      --ssl-key <path>     Path to SSL .key file
+  -v, --version            Output version
 ```

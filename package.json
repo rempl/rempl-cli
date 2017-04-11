@@ -15,6 +15,6 @@
   "dependencies": {
     "clap": "~1.1.3",
     "rempl": "1.0.0-alpha14",
-    "basisjs-tools-server": "basisjs/basisjs-tools-server#f3b6bf2069306265d6d3091dcbde0d6a43d5417f"
+    "basisjs-tools-server": "basisjs/basisjs-tools-server#669d78ff26e0da33d92e8ef0ce965585e6108d12"
   }
 }
