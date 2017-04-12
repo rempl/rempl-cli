@@ -1,3 +1,8 @@
+## 1.2.0 (April 11, 2017)
+
+- Added SSL support
+- Bumped `rempl` version to `1.0.0-alpha15`
+
 ## 1.1.3 (April 7, 2017)
 
 - Pinned server version to avoid unexpected breakage in future
