@@ -5,11 +5,14 @@
 Command line app to launch rempl server instance.
 
 ## Install
-
+1. There are 2 options. You could install package globally
 ```
 npm install -g rempl-cli
 ```
-
+2. Or locally
+```
+npm install -D rempl-cli
+```
 ## Usage
 
 Start a server
