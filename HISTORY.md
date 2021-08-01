@@ -1,3 +1,7 @@
+## next
+
+- Bumped `basisjs-tools-server` to `1.0.2` to fix HTML serialization
+
 ## 1.2.0 (April 11, 2017)
 
 - Added SSL support
