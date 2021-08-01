@@ -1,6 +1,6 @@
-## next
+## 1.2.1 (August 1, 2021)
 
-- Bumped `basisjs-tools-server` to `1.0.2` to fix HTML serialization
+- Fixed server crash related to HTML serialization
 
 ## 1.2.0 (April 11, 2017)
 
