@@ -6,6 +6,7 @@
         "sourceMap": true,
         "outDir": "./dist",
         "module": "ES2020",
+        "allowSyntheticDefaultImports": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "target": "ES6",

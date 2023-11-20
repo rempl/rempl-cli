@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import command, { isCliError } from '../src/cli.js';
+import { command, isCliError } from '../lib/cli.js';
 
 //
 // parse arguments and run command

@@ -1,17 +1,13 @@
 import { EndpointList } from './EndpointList.js';
 import { Endpoint } from './Endpoint.js';
 
-function genUID(len) {
-    function base36(val) {
+function genUID(len = 16) {
+    function base36(val: number) {
         return Math.round(val).toString(36);
     }
 
     // uid should starts with alpha
     let result = base36(10 + 25 * Math.random());
-
-    if (!len) {
-        len = 16;
-    }
 
     while (result.length < len) {
         result += base36(Date.now() * Math.random());

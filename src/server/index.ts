@@ -7,14 +7,18 @@ import { applyRemplProtocol } from './ws.js';
 
 const staticPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../static');
 
-export function createServer(options) {
+type Options = {
+    port?: number;
+}
+
+export function createServer(options: Options) {
     const port = options?.port || 8177;
     const app = express();
     const server = http.createServer(app);
     const io = new Server(server, { maxHttpBufferSize: 10_000_000 });
 
     app.use(express.static(staticPath));
-    app.get('/', function (req, res) {
+    app.get('/', function (_, res) {
         res.sendFile(path.join(staticPath, 'index.html'));
     });
 
@@ -28,15 +32,15 @@ export function createServer(options) {
         });
     });
     io.on('*', function (...a) {
-        console.log(a);
+        console.log('*', a);
     });
 
     applyRemplProtocol(io);
 
     return new Promise((resolve) => {
-        server.listen(port, function () {
-            console.log(`listening on http://localhost:${this.port}`);
-            resolve(server);
+        server.listen(port, function (this: http.Server) {
+            console.log(`Listening on http://localhost:${this.address().port}`);
+            resolve(this);
         });
     });
 }

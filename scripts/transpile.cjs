@@ -3,35 +3,20 @@ const path = require('path');
 const { exec } = require('child_process');
 const sucrase = require('sucrase');
 const { rollup, watch } = require('rollup');
-const { default: dts } = require('rollup-plugin-dts');
 const chalk = require('chalk');
-const { buildBundle } = require('./build.cjs');
 const { version } = require('../package.json');
-const { buildCssModule } = require('./utils.cjs');
 
 const external = [
+    'clap',
     'fs',
     'path',
     'url',
-    'assert',
-    'module',
+    'http',
     'express',
-    'clap',
     'socket.io',
-    'socket.io-client',
+    'assert',
+    'module'
 ];
-
-function buildCss() {
-    return {
-        name: 'build-css',
-        transform(code, id) {
-            if (path.basename(id) === 'style.ts') {
-                this.addWatchFile(id.replace(/\.ts$/, '.css'));
-                return buildCssModule(id);
-            }
-        },
-    };
-}
 
 function replaceContent(map) {
     return {
@@ -42,7 +27,7 @@ function replaceContent(map) {
             if (map.hasOwnProperty(key)) {
                 return map[key](code, id);
             }
-        },
+        }
     };
 }
 
@@ -56,14 +41,14 @@ function resolvePath(ts = false, ext) {
                         // .replace(/\/lib\//, '/cjs/')
                         .replace(/\/src\//, '/lib/')
                         .replace(/\.js$/, ext),
-                    external: true,
+                    external: true
                 };
             }
             if (ts && parent && source.startsWith('.')) {
                 return path.resolve(path.dirname(parent), source.replace(/\.js$/, '.ts'));
             }
             return null;
-        },
+        }
     };
 }
 
@@ -77,16 +62,16 @@ function transpileTypeScript() {
                     transforms: ['typescript'],
                     disableESTransforms: true,
                     sourceMapOptions: {
-                        compiledFilename: id,
-                    },
+                        compiledFilename: id
+                    }
                 });
 
                 return {
                     code: output,
-                    map: sourceMap,
+                    map: sourceMap
                 };
             }
-        },
+        }
     };
 }
 
@@ -97,23 +82,13 @@ function readDir(dir) {
         .map((fn) => `${dir}/${fn}`);
 }
 
-async function transpileDts() {
-    const result = await rollup({
-        input: './src/types-1.d.ts',
-        plugins: [dts()],
-    });
-
-    await result.write({ file: './types-lib.d.ts', format: 'es' });
-    await result.close();
-}
-
 async function transpile({
     entryPoints,
     outputDir,
     format,
     watch: watchMode = false,
     ts = false,
-    onSuccess,
+    onSuccess
 }) {
     const outputExt = format === 'esm' ? '.js' : '.cjs';
     const doneMessage = (duration) =>
@@ -127,11 +102,10 @@ async function transpile({
         plugins: [
             resolvePath(ts, outputExt),
             transpileTypeScript(),
-            buildCss(),
             replaceContent({
-                'src/utils/version.ts': () => `export const version = "${version}";`,
-            }),
-        ],
+                'src/version.ts': () => `export const version = "${version}";`
+            })
+        ]
     };
     const outputOptions = {
         dir: outputDir,
@@ -140,11 +114,11 @@ async function transpile({
         format,
         exports: 'auto',
         preserveModules: true,
-        interop: false,
+        interop: 'auto',
         esModule: format === 'esm',
         generatedCode: {
-            constBindings: true,
-        },
+            constBindings: true
+        }
     };
 
     if (!watchMode) {
@@ -161,7 +135,7 @@ async function transpile({
     } else {
         const watcher = watch({
             ...inputOptions,
-            output: outputOptions,
+            output: outputOptions
         });
 
         watcher.on('event', ({ code, duration, error }) => {
@@ -203,10 +177,10 @@ async function generateTypes(fatal = true) {
 }
 
 async function transpileAll(options) {
-    const { watch = false, types = false, bundle = false } = options || {};
+    const { watch = false, types = false } = options || {};
 
     await transpile({
-        entryPoints: ['src/node.ts', 'src/browser.ts'],
+        entryPoints: ['src/cli.ts', 'src/client/index.ts'],
         outputDir: './lib',
         format: 'esm',
         watch,
@@ -216,17 +190,26 @@ async function transpileAll(options) {
                 generateTypes(!watch);
             }
 
-            if (bundle) {
-                buildBundle();
-            }
-
             await transpile({
-                entryPoints: ['lib/node.js', 'lib/browser.js'],
+                entryPoints: ['lib/cli.js'],
                 outputDir: './lib',
-                format: 'cjs',
+                format: 'cjs'
             });
-        },
+        }
     });
+    // await transpile({
+    //     entryPoints: readDir('test'),
+    //     outputDir: './lib-test',
+    //     format: 'esm',
+    //     watch,
+    //     ts: true,
+    //     onSuccess: () =>
+    //         transpile({
+    //             entryPoints: readDir('lib-test'),
+    //             outputDir: './lib-test',
+    //             format: 'cjs'
+    //         })
+    // });
 }
 
 module.exports = transpileAll;
@@ -234,7 +217,6 @@ module.exports = transpileAll;
 if (require.main === module) {
     transpileAll({
         watch: process.argv.includes('--watch'),
-        types: process.argv.includes('--types'),
-        bundle: process.argv.includes('--bundle'),
+        types: process.argv.includes('--types')
     });
 }

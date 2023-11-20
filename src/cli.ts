@@ -1,27 +1,20 @@
 import path from 'path';
-import fs from 'fs';
-import { command, Error as CliError } from 'clap';
+import { command as createCommand, Error as CliError } from 'clap';
 import { createServer } from './server/index.js';
-import { fileURLToPath } from 'url';
+import { version } from './version.js';
 
 function resolveCwd(value) {
     return path.resolve(process.env.PWD || process.cwd(), value);
 }
 
-export default command('rempl')
+export const command = createCommand('rempl')
     .description('Launch rempl server')
-    .version(
-        JSON.parse(
-            fs.readFileSync(
-                path.join(path.dirname(fileURLToPath(import.meta.url)), '../package.json')
-            )
-        ).version
-    )
+    .version(version)
 
     .option(
         '-p, --port <n>',
         'Listening port (default 8177)',
-        (value) => (isNaN(value) ? 0 : Number(value)),
+        (value: any) => (isNaN(value) ? 0 : Number(value)),
         8177
     )
     .option('--ssl', 'Enable https')
