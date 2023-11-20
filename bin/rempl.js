@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-var cli = require('../lib/cli.js');
+import command, { isCliError } from '../src/cli.js';
 
 //
 // parse arguments and run command
 //
 
 try {
-    cli.run();
-} catch(e) {
-    if (cli.isCliError(e)) {
+    command.run();
+} catch (e) {
+    if (isCliError(e)) {
         console.error(e.message || e);
     } else {
         throw e;

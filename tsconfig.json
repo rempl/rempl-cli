@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "declaration": true,
+        "declarationDir": "./lib",
+        "sourceMap": true,
+        "outDir": "./dist",
+        "module": "ES2020",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "target": "ES6",
+        "lib": ["DOM", "ESNext"],
+        "allowJs": true
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "lib"]
+}
