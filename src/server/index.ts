@@ -63,7 +63,7 @@ function createServerInternal(options: Options) {
         server.listen(port, function (this: http.Server) {
             const address = this.address();
             console.log(
-                `Listening on ${options.ssl ? 'http' : 'https'}://${
+                `Listening on ${options.ssl ? 'https' : 'http'}://${
                     typeof address === 'string' ? address : `localhost:${address?.port}`
                 }`
             );
