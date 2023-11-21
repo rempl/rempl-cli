@@ -17,6 +17,7 @@
   "scripts": {
     "lint": "eslint scripts/*.cjs src && npm run ts-check",
     "ts-check": "tsc --noEmit",
+    "build": "node scripts/transpile.cjs",
     "watch": "node scripts/transpile.cjs --watch",
     "start": "node ./bin/rempl"
   },
