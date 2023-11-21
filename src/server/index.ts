@@ -3,11 +3,13 @@ import pem from 'pem';
 import http from 'http';
 import https from 'https';
 import express from 'express';
-import { Server } from 'socket.io';
+import Server from 'socket.io';
 import { fileURLToPath } from 'url';
 import { applyRemplProtocol } from './ws.js';
+import { createRequire } from 'module';
 
 const staticPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../static');
+const require = createRequire(import.meta.url);
 
 type Options = {
     port?: number;
@@ -36,24 +38,24 @@ function createServerInternal(options: Options) {
         : http.createServer(app);
 
     app.use(express.static(staticPath));
-    app.get('/', function (_, res) {
+    app.get('/socket.io.slim.js', (_, res) => {
+        res.sendFile(require.resolve('socket.io-client/dist/socket.io.slim.js'));
+    });
+    app.get('/', (_, res) => {
         res.sendFile(path.join(staticPath, 'index.html'));
     });
 
     // apply socket.io
     const io = new Server(server, { maxHttpBufferSize: 100_000_000 });
 
-    io.on('connection', function (socket) {
-        // console.log(socket);
-        console.log('A client connected');
+    // io.on('connection', function (socket) {
+    //     // console.log(socket);
+    //     console.log('A client connected');
 
-        socket.on('disconnect', function () {
-            console.log('A client disconnected');
-        });
-    });
-    io.on('*', function (...a) {
-        console.log('*', a);
-    });
+    //     socket.on('disconnect', function () {
+    //         console.log('A client disconnected');
+    //     });
+    // });
 
     applyRemplProtocol(io);
 
