@@ -1,3 +1,8 @@
+## 1.2.2
+
+- Fixed SSL support
+- Initial server refactoring, change dependencies
+
 ## 1.2.1 (August 1, 2021)
 
 - Fixed server crash related to HTML serialization
