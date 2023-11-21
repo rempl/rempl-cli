@@ -14,8 +14,8 @@ const require = createRequire(import.meta.url);
 type Options = {
     port?: number;
     ssl?: boolean;
-    sslKey?: string;
-    sslCert?: string;
+    sslKey?: string | Buffer;
+    sslCert?: string | Buffer;
 };
 
 function createCertificate() {
@@ -75,16 +75,16 @@ function createServerInternal(options: Options) {
 export async function createServer(options: Options) {
     if (options.ssl) {
         if (!options.sslKey && !options.sslCert) {
-            console.warn(
-                '[WARNING] A self-signed SSL certificate is currently in use. This configuration is only suitable for development purposes and should not be used in a production environment. For production deployments, please provide valid SSL certificate files using "--ssl-key" and "--ssl-cert" options.\n'
-            );
-
             const res = await createCertificate();
             options = {
                 ...options,
                 sslKey: res.clientKey,
                 sslCert: res.certificate
             };
+
+            console.warn(
+                '[WARNING] A self-signed SSL certificate is currently in use. This configuration is only suitable for development purposes and should not be used in a production environment. For production deployments, please provide valid SSL certificate files using "--ssl-key" and "--ssl-cert" options.\n'
+            );
         } else if (!options.sslKey || !options.sslCert) {
             throw new Error('sslKey and sslCert options should be both specified or omitted');
         }

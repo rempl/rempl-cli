@@ -39,8 +39,6 @@ export function applyRemplProtocol(wsServer: Server, options: Options = {}) {
             const id = exclusiveEndpointId || data.id || genUID();
             let endpoint = endpoints.get('id', id);
 
-            console.log('Publisher connect', { id, data });
-
             if (!endpoint) {
                 endpoint = new Endpoint(endpoints, id, socket, data);
                 endpoint.num = lastNum++;
