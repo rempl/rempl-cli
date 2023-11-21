@@ -1,8 +1,8 @@
-## next
+## 1.2.3 (November 21, 2023)
 
 - Fixed missed `bin` folder in a npm package, a regression introduced by previous release
 
-## 1.2.2
+## 1.2.2 (November 20, 2023)
 
 - Fixed SSL support
 - Initial server refactoring, change dependencies
