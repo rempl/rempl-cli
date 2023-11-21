@@ -1,5 +1,7 @@
 import path from 'path';
+import pem from 'pem';
 import http from 'http';
+import https from 'https';
 import express from 'express';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
@@ -9,13 +11,29 @@ const staticPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../.
 
 type Options = {
     port?: number;
+    ssl?: boolean;
+    sslKey?: string;
+    sslCert?: string;
+};
+
+function createCertificate() {
+    return new Promise<pem.CertificateCreationResult>((resolve, reject) => {
+        pem.createCertificate({ days: 1, selfSigned: true }, (error, keys) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(keys);
+            }
+        });
+    });
 }
 
-export function createServer(options: Options) {
+function createServerInternal(options: Options) {
     const port = options?.port || 8177;
     const app = express();
-    const server = http.createServer(app);
-    const io = new Server(server, { maxHttpBufferSize: 10_000_000 });
+    const server = options.ssl
+        ? https.createServer({ key: options.sslKey, cert: options.sslCert }, app)
+        : http.createServer(app);
 
     app.use(express.static(staticPath));
     app.get('/', function (_, res) {
@@ -23,6 +41,8 @@ export function createServer(options: Options) {
     });
 
     // apply socket.io
+    const io = new Server(server, { maxHttpBufferSize: 100_000_000 });
+
     io.on('connection', function (socket) {
         // console.log(socket);
         console.log('A client connected');
@@ -39,8 +59,34 @@ export function createServer(options: Options) {
 
     return new Promise((resolve) => {
         server.listen(port, function (this: http.Server) {
-            console.log(`Listening on http://localhost:${this.address().port}`);
+            const address = this.address();
+            console.log(
+                `Listening on ${options.ssl ? 'http' : 'https'}://${
+                    typeof address === 'string' ? address : `localhost:${address?.port}`
+                }`
+            );
             resolve(this);
         });
     });
+}
+
+export async function createServer(options: Options) {
+    if (options.ssl) {
+        if (!options.sslKey && !options.sslCert) {
+            console.warn(
+                '[WARNING] A self-signed SSL certificate is currently in use. This configuration is only suitable for development purposes and should not be used in a production environment. For production deployments, please provide valid SSL certificate files using "--ssl-key" and "--ssl-cert" options.\n'
+            );
+
+            const res = await createCertificate();
+            options = {
+                ...options,
+                sslKey: res.clientKey,
+                sslCert: res.certificate
+            };
+        } else if (!options.sslKey || !options.sslCert) {
+            throw new Error('sslKey and sslCert options should be both specified or omitted');
+        }
+    }
+
+    return createServerInternal(options);
 }

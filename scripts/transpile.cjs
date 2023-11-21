@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const sucrase = require('sucrase');
@@ -6,17 +5,7 @@ const { rollup, watch } = require('rollup');
 const chalk = require('chalk');
 const { version } = require('../package.json');
 
-const external = [
-    'clap',
-    'fs',
-    'path',
-    'url',
-    'http',
-    'express',
-    'socket.io',
-    'assert',
-    'module'
-];
+const external = ['clap', 'fs', 'path', 'url', 'http', 'express', 'socket.io', 'assert', 'module'];
 
 function replaceContent(map) {
     return {
@@ -75,12 +64,12 @@ function transpileTypeScript() {
     };
 }
 
-function readDir(dir) {
-    return fs
-        .readdirSync(dir)
-        .filter((fn) => fn.endsWith('.js') || fn.endsWith('.ts'))
-        .map((fn) => `${dir}/${fn}`);
-}
+// function readDir(dir) {
+//     return fs
+//         .readdirSync(dir)
+//         .filter((fn) => fn.endsWith('.js') || fn.endsWith('.ts'))
+//         .map((fn) => `${dir}/${fn}`);
+// }
 
 async function transpile({
     entryPoints,
@@ -180,7 +169,7 @@ async function transpileAll(options) {
     const { watch = false, types = false } = options || {};
 
     await transpile({
-        entryPoints: ['src/cli.ts', 'src/client/index.ts'],
+        entryPoints: ['src/cli.ts'],
         outputDir: './lib',
         format: 'esm',
         watch,

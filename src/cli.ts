@@ -1,10 +1,24 @@
+import fs from 'fs';
 import path from 'path';
 import { command as createCommand, Error as CliError } from 'clap';
 import { createServer } from './server/index.js';
 import { version } from './version.js';
 
-function resolveCwd(value) {
+function resolveCwd(value: string) {
     return path.resolve(process.env.PWD || process.cwd(), value);
+}
+
+function tryReadFile(filepath: string | undefined, name: string) {
+    if (!filepath) {
+        return undefined;
+    }
+
+    try {
+        const abspath = path.resolve(filepath);
+        return fs.readFileSync(abspath);
+    } catch (e) {
+        console.error(`Error on read ${name} file`, e);
+    }
 }
 
 export const command = createCommand('rempl')
@@ -23,10 +37,15 @@ export const command = createCommand('rempl')
     .option('--dev', 'Developer mode (use dev version of everything when possible)')
     .option('--no-color', 'Suppress color output')
 
-    .action(function ({ options }) {
-        createServer(options);
+    // FIXME: any
+    .action(function ({ options }: { options: any }) {
+        createServer({
+            ...options,
+            sslKey: tryReadFile(options.sslKey, 'sslKey'),
+            sslCert: tryReadFile(options.sslCert, 'sslCert')
+        });
     });
 
-export function isCliError(err) {
+export function isCliError(err: Error) {
     return err instanceof CliError;
 }

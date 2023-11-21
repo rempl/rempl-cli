@@ -1,5 +1,12 @@
+import type { Server, Socket } from 'socket.io';
 import { EndpointList } from './EndpointList.js';
 import { Endpoint } from './Endpoint.js';
+
+type Options = {
+    remplExclusivePublisher?: string;
+    dev?: boolean;
+};
+type OnEndpointConnectCallback = (endpoint: Endpoint) => void;
 
 function genUID(len = 16) {
     function base36(val: number) {
@@ -13,16 +20,16 @@ function genUID(len = 16) {
         result += base36(Date.now() * Math.random());
     }
 
-    return result.substr(0, len);
+    return result.slice(0, len);
 }
 
-export function applyRemplProtocol(wsServer, options = {}) {
+export function applyRemplProtocol(wsServer: Server, options: Options = {}) {
     const exclusiveEndpointId = options.remplExclusivePublisher ? genUID() : null;
     const endpoints = new EndpointList(wsServer);
-    let onEndpointConnectMode = null;
+    let onEndpointConnectMode: OnEndpointConnectCallback | null = null;
     let lastNum = 0;
 
-    wsServer.on('connect', function (socket) {
+    wsServer.on('connect', function (socket: Socket & { publisherId?: string }) {
         //
         // endpoint (publishers) -> ws server
         //
@@ -42,27 +49,33 @@ export function applyRemplProtocol(wsServer, options = {}) {
                 endpoint.setOnline(socket);
             }
 
+            const resolvedEndpoint = endpoint;
+
             socket
                 .on('rempl:endpoint info', function (data) {
-                    endpoint.update(data);
+                    resolvedEndpoint.update(data);
                     endpoints.notifyUpdates();
                 })
                 .on('rempl:from publisher', (publisherId, ...args) => {
                     // var channel = socket.to(endpoint.room);
                     // channel.emit.apply(channel, packet('rempl:to subscriber', arguments));
-                    endpoint.subscribers.forEach((subscriber) => {
-                        if (subscriber.publisherId === publisherId) {
-                            subscriber.emit('rempl:to subscriber', ...args);
+                    resolvedEndpoint.subscribers.forEach(
+                        (subscriber: Socket & { publisherId?: string }) => {
+                            if (subscriber.publisherId === publisherId) {
+                                subscriber.emit('rempl:to subscriber', ...args);
+                            }
                         }
-                    });
+                    );
                 })
-                .on('disconnect', () => endpoint.setOffline());
+                .on('disconnect', () => {
+                    resolvedEndpoint.setOffline();
+                });
 
             // connected and inited
             connectCallback({
                 id,
                 subscribers: endpoint.subscribers.length,
-                num: endpoint.num,
+                num: endpoint.num
             });
 
             if (typeof onEndpointConnectMode === 'function') {
@@ -75,11 +88,15 @@ export function applyRemplProtocol(wsServer, options = {}) {
         //
         socket.on('rempl:host connect', function (connectCallback) {
             socket.on('rempl:pick publisher', function (pickCallback) {
-                function startIdentify(endpoint) {
-                    endpoint.emitIfPossible('rempl:identify', endpoint.num, (publisherId) => {
-                        pickCallback(endpoint.id, publisherId);
-                        stopIdentify();
-                    });
+                function startIdentify(endpoint: Endpoint) {
+                    endpoint.emitIfPossible(
+                        'rempl:identify',
+                        endpoint.num,
+                        (publisherId: string) => {
+                            pickCallback(endpoint.id, publisherId);
+                            stopIdentify();
+                        }
+                    );
                 }
                 function stopIdentify() {
                     onEndpointConnectMode = null;
@@ -116,11 +133,9 @@ export function applyRemplProtocol(wsServer, options = {}) {
                     publisherId,
                     {
                         dev: options.dev,
-                        accept: ['script', 'url'],
+                        accept: ['script', 'url']
                     },
-                    (...args) => {
-                        callback(...args);
-                    }
+                    callback
                 );
             });
 
@@ -128,7 +143,7 @@ export function applyRemplProtocol(wsServer, options = {}) {
                 endpoints: endpoints.getList(),
                 exclusivePublisher: exclusiveEndpointId
                     ? exclusiveEndpointId + '/' + options.remplExclusivePublisher
-                    : null,
+                    : null
             });
         });
 
