@@ -1,3 +1,7 @@
+## next
+
+- Fixed missed `bin` folder in a npm package, a regression introduced by previous release
+
 ## 1.2.2
 
 - Fixed SSL support

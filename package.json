@@ -12,7 +12,7 @@
   ],
   "type": "module",
   "bin": {
-    "rempl": "./bin/rempl"
+    "rempl": "./bin/rempl.js"
   },
   "scripts": {
     "lint": "eslint scripts/*.cjs src && npm run ts-check",
@@ -47,6 +47,7 @@
     "node": ">=16.0.0"
   },
   "files": [
+    "bin",
     "lib",
     "static"
   ]
